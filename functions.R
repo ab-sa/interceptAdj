@@ -10,7 +10,6 @@ EstOR_compare <- function(q_changeRate = 10, mu = 0.5, pi_val = NULL, mu_val = N
                     CV = sqrt(v_vals) / mu,
                     AUC = NA,
                     Exact_OR = NA,
-                    Prev_OR = NA,
                     Janssen_OR = NA,
                     TaylorApprox_OR = NA)
   
@@ -45,7 +44,7 @@ EstOR_compare <- function(q_changeRate = 10, mu = 0.5, pi_val = NULL, mu_val = N
       res$AUC[i] <- ifelse(mean(y_sim) > 0, try(auc(y_sim, pi_sim_adj), silent = T), NA)
       
       ## prevalance estimate (Janssen's suggestion)
-      res$Prev_OR[i] <- (q / (1 - q)) / (pi_mean / (1 - pi_mean))
+      res$Janssen_OR[i] <- (q / (1 - q)) / (pi_mean / (1 - pi_mean))
 
       ## our estimate (Taylor approximation)
       res$TaylorApprox_OR[i] <- odds_adjust(p0 = pi_mean, p1 = q, v = pi_var)
