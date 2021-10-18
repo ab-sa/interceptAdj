@@ -1,10 +1,11 @@
-EstOR_compare <- function(q_changeRate = 10, mu = 0.5, pi_val = NULL, mu_val = NULL,
-                          SetSeed = NULL, n_sim = 10000) {
+EstOR_compare <- function(q_changeRate = 10, mu = 0.5, SetSeed = NULL, n_sim = 10000,
+                          q = NULL, pi_dev_var = NULL) {
   
   if (! is.null(SetSeed)) set.seed(SetSeed)
   
   ## Var range
-  v_vals <- seq(0, (mu) * (1 - mu), length.out = 50)
+  if (is.null(pi_dev_var)) v_vals <- seq(0, (mu) * (1 - mu), length.out = 50)
+  else v_vals <- seq(pi_dev_var - 0.0005, pi_dev_var + 0.0005, length.out = 3)
 
   res <- data.frame(Var = v_vals,
                     CV = sqrt(v_vals) / mu,
@@ -33,7 +34,7 @@ EstOR_compare <- function(q_changeRate = 10, mu = 0.5, pi_val = NULL, mu_val = N
       l_OR_sim <- log(pi_sim / (1 - pi_sim))
       pi_mean <- mean(pi_sim)
       pi_var <- var(pi_sim)
-      q <- mean(pi_sim) + mean(pi_sim) * q_changeRate / 100
+      if (is.null(q)) q <- mean(pi_sim) + mean(pi_sim) * q_changeRate / 100
 
       y_temp <- c(rep(1, round(n_sim_adj * q)), rep(0, n_sim_adj - round(n_sim_adj * q)))
       glm_temp <- glm(y_temp ~ offset(l_OR_sim), family = binomial(link = "logit"))
@@ -54,4 +55,6 @@ EstOR_compare <- function(q_changeRate = 10, mu = 0.5, pi_val = NULL, mu_val = N
   
   return(res)
 }
+
+
 
